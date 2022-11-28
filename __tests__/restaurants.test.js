@@ -33,9 +33,36 @@ describe('restaurant routes', () => {
     return setup(pool);
   });
   it('/restaurants should return a list of restaurants', async () => {
-    await request(app).get('/api/v1/restaurants');
-    const resp = await request(app);
+    const resp = await request(app).get('/api/v1/restaurants');
     expect(resp.status).toEqual(200);
+    expect(resp.body).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "cost": 1,
+          "id": "1",
+          "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
+          "name": "Pip's Original",
+        },
+        Object {
+          "cost": 3,
+          "id": "2",
+          "image": "https://media-cdn.tripadvisor.com/media/photo-m/1280/13/af/df/89/duck.jpg",
+          "name": "Mucca Osteria",
+        },
+        Object {
+          "cost": 2,
+          "id": "3",
+          "image": "https://media-cdn.tripadvisor.com/media/photo-m/1280/1c/f2/e5/0c/dinner.jpg",
+          "name": "Mediterranean Exploration Company",
+        },
+        Object {
+          "cost": 2,
+          "id": "4",
+          "image": "https://media-cdn.tripadvisor.com/media/photo-o/0d/d6/a1/06/chocolate-gooey-brownie.jpg",
+          "name": "Salt & Straw",
+        },
+      ]
+    `);
   });
   afterAll(() => {
     pool.end();
