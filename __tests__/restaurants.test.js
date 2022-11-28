@@ -38,27 +38,19 @@ describe('restaurant routes', () => {
     expect(resp.body).toMatchInlineSnapshot(`
       Array [
         Object {
-          "cost": 1,
           "id": "1",
-          "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
           "name": "Pip's Original",
         },
         Object {
-          "cost": 3,
           "id": "2",
-          "image": "https://media-cdn.tripadvisor.com/media/photo-m/1280/13/af/df/89/duck.jpg",
           "name": "Mucca Osteria",
         },
         Object {
-          "cost": 2,
           "id": "3",
-          "image": "https://media-cdn.tripadvisor.com/media/photo-m/1280/1c/f2/e5/0c/dinner.jpg",
           "name": "Mediterranean Exploration Company",
         },
         Object {
-          "cost": 2,
           "id": "4",
-          "image": "https://media-cdn.tripadvisor.com/media/photo-o/0d/d6/a1/06/chocolate-gooey-brownie.jpg",
           "name": "Salt & Straw",
         },
       ]
@@ -68,6 +60,37 @@ describe('restaurant routes', () => {
   it('GET /api/v1/restaurants/:id should return a restaurant with nested reviews', async () => {
     const resp = await request(app).get('/api/v1/restaurants/1');
     expect(resp.status).toBe(200);
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "cost": 1,
+        "id": "1",
+        "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
+        "name": "Pip's Original",
+        "reviews": Array [
+          Object {
+            "detail": "Best restaurant ever!",
+            "id": "1",
+            "restaurantId": "1",
+            "stars": 5,
+            "userId": "1",
+          },
+          Object {
+            "detail": "Terrible service :(",
+            "id": "2",
+            "restaurantId": "1",
+            "stars": 1,
+            "userId": "2",
+          },
+          Object {
+            "detail": "It was fine.",
+            "id": "3",
+            "restaurantId": "1",
+            "stars": 4,
+            "userId": "3",
+          },
+        ],
+      }
+    `);
   });
   afterAll(() => {
     pool.end();
