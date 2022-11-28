@@ -64,6 +64,11 @@ describe('restaurant routes', () => {
       ]
     `);
   });
+
+  it('GET /api/v1/restaurants/:id should return a restaurant with nested reviews', async () => {
+    const resp = await request(app).get('/api/v1/restaurants/1');
+    expect(resp.status).toBe(200);
+  });
   afterAll(() => {
     pool.end();
   });
