@@ -106,8 +106,28 @@ describe('restaurant routes', () => {
     await agent
       .post('/api/v1/restaurants/1/reviews')
       .send({ stars: '5', detail: 'New review' });
-    const resp = await agent.delete('/api/v1/reviews/4');
-    expect(resp.status).toBe(204);
+    const resp = await request(app).delete('/api/v1/reviews/4');
+    expect(resp.status).toBe(200);
+    console.log(resp.body);
+    const reviewResp = await request(app).get('/api/v1/reviews/4');
+    console.log(reviewResp.body);
+    expect(reviewResp.status).toBe(404);
+  });
+  it('GET /api/v1/reviews/:id should return a specific review', async () => {
+    const [agent] = await registerAndLogin();
+    await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: '5', detail: 'New review' });
+    const resp = await request(app).get('/api/v1/reviews/4');
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "New review",
+        "id": "4",
+        "restaurantId": "1",
+        "stars": 5,
+        "userId": "4",
+      }
+    `);
   });
   afterAll(() => {
     pool.end();
