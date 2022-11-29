@@ -3,6 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
+const { agent } = require('supertest');
 
 // Dummy user for testing
 const mockUser = {
@@ -91,6 +92,13 @@ describe('restaurant routes', () => {
         ],
       }
     `);
+  });
+  it('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
+    registerAndLogin();
+    const resp = await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: '5', detail: 'New review' });
+    expect(resp.status).toBe(200);
   });
   afterAll(() => {
     pool.end();
