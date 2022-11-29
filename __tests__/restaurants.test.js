@@ -127,6 +127,22 @@ describe('restaurant routes', () => {
       }
     `);
   });
+  it('DELETE /api/v1/reviews/:id should delete the review if request is made by admin', async () => {
+    const agent = request.agent(app);
+    await UserService.create({
+      firstName: 'Admin',
+      lastName: 'Admin',
+      email: 'admin',
+      password: 'admin12345',
+    });
+    await agent
+      .post('/api/v1/users/sessions')
+      .send({ email: 'admin', password: 'admin12345' });
+    const resp = await agent.delete('/api/v1/reviews/1');
+    expect(resp.status).toBe(200);
+    const reviewResp = await agent.get('/api/v1/reviews/1');
+    expect(reviewResp.status).toBe(404);
+  });
   afterAll(() => {
     pool.end();
   });
