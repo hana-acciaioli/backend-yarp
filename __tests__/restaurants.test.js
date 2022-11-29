@@ -103,6 +103,9 @@ describe('restaurant routes', () => {
   });
   it('DELETE /api/v1/reviews/:id should delete the review if request is made by reviewer or admin', async () => {
     const [agent] = await registerAndLogin();
+    await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: '5', detail: 'New review' });
     const resp = await agent.delete('/api/v1/reviews/4');
     expect(resp.status).toBe(204);
   });
