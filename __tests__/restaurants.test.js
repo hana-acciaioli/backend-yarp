@@ -101,6 +101,11 @@ describe('restaurant routes', () => {
       }
     `);
   });
+  it('DELETE /api/v1/reviews/:id should delete the review if request is made by reviewer or admin', async () => {
+    const [agent] = await registerAndLogin();
+    const resp = await agent.delete('/api/v1/reviews/4');
+    expect(resp.status).toBe(204);
+  });
   afterAll(() => {
     pool.end();
   });
