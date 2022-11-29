@@ -106,11 +106,9 @@ describe('restaurant routes', () => {
     await agent
       .post('/api/v1/restaurants/1/reviews')
       .send({ stars: '5', detail: 'New review' });
-    const resp = await request(app).delete('/api/v1/reviews/4');
+    const resp = await agent.delete('/api/v1/reviews/4');
     expect(resp.status).toBe(200);
-    console.log(resp.body);
-    const reviewResp = await request(app).get('/api/v1/reviews/4');
-    console.log(reviewResp.body);
+    const reviewResp = await agent.get('/api/v1/reviews/4');
     expect(reviewResp.status).toBe(404);
   });
   it('GET /api/v1/reviews/:id should return a specific review', async () => {
