@@ -3,29 +3,20 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
-const { agent } = require('supertest');
 
 // Dummy user for testing
 const mockUser = {
   firstName: 'Test',
-  lastName: 'User',
+  lastName: 'Testy',
   email: 'test@example.com',
   password: '12345',
 };
-
-const registerAndLogin = async (userProps = {}) => {
-  const password = userProps.password ?? mockUser.password;
-
-  // Create an "agent" that gives us the ability
-  // to store cookies between requests in a test
+const registerAndLogin = async () => {
   const agent = request.agent(app);
-
-  // Create a user to sign in with
-  const user = await UserService.create({ ...mockUser, ...userProps });
-
-  // ...then sign in
-  const { email } = user;
-  await agent.post('/api/v1/users/sessions').send({ email, password });
+  const user = await UserService.create(mockUser);
+  await agent
+    .post('/api/v1/users/sessions')
+    .send({ email: mockUser.email, password: mockUser.password });
   return [agent, user];
 };
 
@@ -64,6 +55,7 @@ describe('restaurant routes', () => {
     expect(resp.body).toMatchInlineSnapshot(`
       Object {
         "cost": 1,
+        "cuisine": "American",
         "id": "1",
         "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
         "name": "Pip's Original",
@@ -93,12 +85,21 @@ describe('restaurant routes', () => {
       }
     `);
   });
-  it('POST /api/v1/restaurants/:restId/reviews should create a new review when logged in', async () => {
-    registerAndLogin();
+  it('POST /api/v1/restaurants/:id/reviews should create a new review when logged in', async () => {
+    const [agent] = await registerAndLogin();
     const resp = await agent
       .post('/api/v1/restaurants/1/reviews')
       .send({ stars: '5', detail: 'New review' });
     expect(resp.status).toBe(200);
+    expect(resp.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "New review",
+        "id": "4",
+        "restaurantId": "1",
+        "stars": 5,
+        "userId": "4",
+      }
+    `);
   });
   afterAll(() => {
     pool.end();
