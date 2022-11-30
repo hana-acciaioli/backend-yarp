@@ -143,6 +143,14 @@ describe('restaurant routes', () => {
     const reviewResp = await agent.get('/api/v1/reviews/1');
     expect(reviewResp.status).toBe(404);
   });
+  it('DELETE /api/v1/reviews/:id should not delete a review of user is not authorized', async () => {
+    const [agent] = await registerAndLogin();
+    await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: '5', detail: 'New review' });
+    const resp = await agent.delete('/api/v1/reviews/1');
+    expect(resp.status).toBe(403);
+  });
   afterAll(() => {
     pool.end();
   });
