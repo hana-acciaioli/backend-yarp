@@ -101,6 +101,13 @@ describe('restaurant routes', () => {
       }
     `);
   });
+  it('POST /api/v1/restaurants/:id/reviews should NOT create a new review when NOT logged in', async () => {
+    const agent = await request.agent(app);
+    const resp = await agent
+      .post('/api/v1/restaurants/1/reviews')
+      .send({ stars: '5', detail: 'New review' });
+    expect(resp.status).toBe(401);
+  });
   it('DELETE /api/v1/reviews/:id should delete the review if request is made by reviewer or admin', async () => {
     const [agent] = await registerAndLogin();
     await agent
